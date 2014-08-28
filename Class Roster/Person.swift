@@ -16,6 +16,7 @@ class Person: NSObject, NSCoding {
     var gitHubUserName : String?
     
     var profileImage : UIImage?
+    var hasImage = false
     
     init (firstName : String, lastName : String) {
         self.firstName = firstName
@@ -29,17 +30,15 @@ class Person: NSObject, NSCoding {
     required init(coder aDecoder: NSCoder!) {
         self.firstName      = aDecoder.decodeObjectForKey("firstName") as String
         self.lastName       = aDecoder.decodeObjectForKey("lastName") as String
-        // if self.gitHubUserName != nil {
-            self.gitHubUserName = aDecoder.decodeObjectForKey("gitHubUserName") as? String
-        // }
+        self.gitHubUserName = aDecoder.decodeObjectForKey("gitHubUserName") as? String
+        self.hasImage       = aDecoder.decodeObjectForKey("hasImage") as Bool
     }
     
     func encodeWithCoder(aCoder: NSCoder!) {
         aCoder.encodeObject(firstName, forKey: "firstName")
         aCoder.encodeObject(lastName, forKey: "lastName")
-        // if self.gitHubUserName != nil {
-            aCoder.encodeObject(gitHubUserName, forKey: "gitHubUserName")
-        // }
+        aCoder.encodeObject(gitHubUserName, forKey: "gitHubUserName")
+        aCoder.encodeObject(hasImage, forKey: "hasImage")
     }
     
 }

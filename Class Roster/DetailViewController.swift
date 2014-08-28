@@ -33,15 +33,17 @@ class DetailViewController: UIViewController, UITextFieldDelegate, UIImagePicker
         self.imageView.layer.borderWidth = 3.0
         self.imageView.layer.borderColor = UIColor.whiteColor().CGColor
         
-        // ** Image Tap Gesture Recognizer
         let imageSelect = UITapGestureRecognizer(target: self, action: NSSelectorFromString("imageTap"))
         self.imageView.addGestureRecognizer(imageSelect)
     }
     
     override func viewDidAppear(animated: Bool) {
-        if self.selectedPerson!.gitHubUserName != nil {
-            gitHubProfileImage()
+        if self.selectedPerson!.profileImage == nil {
+            if self.selectedPerson!.gitHubUserName != nil {
+                gitHubProfileImage()
+            }
         }
+        
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -54,7 +56,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, UIImagePicker
         if self.selectedPerson!.profileImage != nil {
             self.imageView.image = self.selectedPerson!.profileImage
         } else {
-            self.imageView.image = defaultProfileImage
+            self.imageView.image = self.defaultProfileImage
         }
         
     }
@@ -75,14 +77,15 @@ class DetailViewController: UIViewController, UITextFieldDelegate, UIImagePicker
         return true
     }
     
-    @IBAction func photoButton(sender: UIButton) {
+    func imageTap() {
         var profileImageAction = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.ActionSheet)
         profileImageAction.addAction(UIAlertAction(title: "Take Photo", style: UIAlertActionStyle.Default, handler: nil))
         profileImageAction.addAction(UIAlertAction(title: "Choose Existing", style: UIAlertActionStyle.Default, handler: { (UIAlertAction) in
             var imagePickerController = UIImagePickerController()
             imagePickerController.delegate = self
             imagePickerController.allowsEditing = true
-            imagePickerController.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
+            imagePickerController.sourceType = UIImagePickerControllerSourceType.SavedPhotosAlbum
+            // imagePickerController.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
             self.presentViewController(imagePickerController, animated: true, completion: nil)
         }))
         profileImageAction.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
@@ -94,18 +97,24 @@ class DetailViewController: UIViewController, UITextFieldDelegate, UIImagePicker
         var editedImage = info[UIImagePickerControllerEditedImage] as UIImage
         self.imageView.image = editedImage
         self.selectedPerson!.profileImage = editedImage
+        self.selectedPerson!.hasImage = true
+        self.saveImageToPhone(editedImage)
     }
     
     func imagePickerControllerDidCancel(picker: UIImagePickerController!) {
         picker.dismissViewControllerAnimated(true, completion: nil)
     }
     
-    func imageTap(sender: UITapGestureRecognizer) {
-        var imagePickerController = UIImagePickerController()
-        imagePickerController.delegate = self
-        imagePickerController.allowsEditing = true
-        imagePickerController.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
-        self.presentViewController(imagePickerController, animated: true, completion: nil)
+    func saveImageToPhone(image: UIImage) {
+        var pngData = UIImagePNGRepresentation(image)
+        let filePath = self.pathForDocumentDirectory() + "/\(self.selectedPerson!.fullName()).png"
+        pngData.writeToFile(filePath, atomically: true)
+    }
+    
+    func pathForDocumentDirectory() -> String {
+        let paths = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true) as [String]
+        let documentsDirectory = paths[0]
+        return documentsDirectory
     }
     
     @IBAction func infoButton(sender: UIButton) {
@@ -114,6 +123,8 @@ class DetailViewController: UIViewController, UITextFieldDelegate, UIImagePicker
         gitHubAlert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
         gitHubAlert.addAction(UIAlertAction(title: "Done", style: UIAlertActionStyle.Default, handler: { (UIAlertAction) in
             self.gitHubTxtField.text = self.textField.text
+            self.selectedPerson!.gitHubUserName = self.gitHubTxtField.text
+            self.gitHubProfileImage()
         }))
         self.presentViewController(gitHubAlert, animated: true, completion: nil)
     }
@@ -151,21 +162,24 @@ class DetailViewController: UIViewController, UITextFieldDelegate, UIImagePicker
             
             if let avatarURL = json["avatar_url"] as? String {
                 profilePhotoURL = NSURL(string: avatarURL)
-                println("Retrieving GitHub avatar")
+                println("Retrieving GitHub avatar address")
             }
             
-            println("Retrieving GitHub avatar complete")
+            println("Preparing to download avatar ")
             if profilePhotoURL != nil {
                 println("profilePhotoURL does exist")
                 var downloadOperation = NSBlockOperation { () -> Void in
                     var profilePhotoData = NSData(contentsOfURL: profilePhotoURL)
                     var profilePhotoImage = UIImage(data: profilePhotoData)
+                    self.selectedPerson!.profileImage = profilePhotoImage
+                    self.selectedPerson!.hasImage = true
+                    self.saveImageToPhone(profilePhotoImage)
                     NSOperationQueue.mainQueue().addOperationWithBlock({ () -> Void in
                         self.imageView.image = profilePhotoImage
                         // self.activityIndicator.stopAnimating()
                     })
                 }
-                downloadOperation.qualityOfService = NSQualityOfService.Background
+                // downloadOperation.qualityOfService = NSQualityOfService.Background
                 self.imageDownloadQueue.addOperation(downloadOperation)
                 println("Threading executed")
             }

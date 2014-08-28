@@ -304,16 +304,7 @@
                                     </mask>
                                 </variation>
                             </textField>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6bt-Hv-KnO">
-                                <rect key="frame" x="113" y="129" width="41" height="30"/>
-                                <state key="normal" title="Photo">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="photoButton:" destination="xV9-wx-vcF" eventType="touchUpInside" id="CcN-J5-jfm"/>
-                                </connections>
-                            </button>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="JAy-6i-MYV">
+                            <imageView contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="JAy-6i-MYV">
                                 <rect key="frame" x="28" y="84" width="75" height="75"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="75" id="36W-l4-RKv"/>
@@ -434,12 +425,10 @@
                             <constraint firstItem="qTh-fK-f04" firstAttribute="top" secondItem="9jV-oF-cne" secondAttribute="bottom" constant="25" id="Ase-do-amx"/>
                             <constraint firstItem="8Vi-Xh-MVt" firstAttribute="leading" secondItem="fYX-WU-50M" secondAttribute="leadingMargin" constant="15" id="Bih-6z-Xy0"/>
                             <constraint firstItem="5pX-WV-qTg" firstAttribute="leading" secondItem="fYX-WU-50M" secondAttribute="leadingMargin" constant="16" id="Cbc-gL-PFP"/>
-                            <constraint firstItem="6bt-Hv-KnO" firstAttribute="top" secondItem="qTh-fK-f04" secondAttribute="bottom" constant="20" id="Fv1-nN-sYq"/>
                             <constraint firstItem="JAy-6i-MYV" firstAttribute="leading" secondItem="fYX-WU-50M" secondAttribute="leadingMargin" constant="12" id="G2s-Z3-Ycj"/>
                             <constraint firstItem="8Vi-Xh-MVt" firstAttribute="top" secondItem="YtS-vy-2aC" secondAttribute="bottom" constant="4" id="KGI-Fx-4XA"/>
                             <constraint firstItem="JAy-6i-MYV" firstAttribute="top" secondItem="9jV-oF-cne" secondAttribute="bottom" constant="20" id="Lqa-rE-q2q"/>
                             <constraint firstItem="qDr-mE-9yw" firstAttribute="top" secondItem="Oj3-BQ-dHY" secondAttribute="bottom" constant="4" id="MvE-nk-X5o"/>
-                            <constraint firstItem="6bt-Hv-KnO" firstAttribute="leading" secondItem="JAy-6i-MYV" secondAttribute="trailing" constant="10" id="P3v-uH-rkA"/>
                             <constraint firstItem="qTh-fK-f04" firstAttribute="leading" secondItem="JAy-6i-MYV" secondAttribute="trailing" constant="10" id="Q9S-VG-J7V"/>
                             <constraint firstItem="Oj3-BQ-dHY" firstAttribute="leading" secondItem="fYX-WU-50M" secondAttribute="leadingMargin" constant="16" id="Sa6-48-7XO"/>
                             <constraint firstAttribute="trailingMargin" secondItem="8Vi-Xh-MVt" secondAttribute="trailing" constant="15" id="UPv-Pr-eOK"/>

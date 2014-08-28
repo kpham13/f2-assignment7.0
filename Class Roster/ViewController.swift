@@ -27,9 +27,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 
         if let savedArray = NSKeyedUnarchiver.unarchiveObjectWithFile(self.pathForPListArchive()) as? NSArray {
             self.teachers = savedArray.objectAtIndex(0) as [Person]
-            classRoster.append(teachers)
+            self.classRoster.append(teachers)
             self.students = savedArray.objectAtIndex(1) as [Person]
-            classRoster.append(students)
+            self.classRoster.append(students)
+            self.imageLoad()
         } else {
             for arrayIndex in 0...(pListArray.count-1) {
                 let arrayInArray : AnyObject = pListArray.objectAtIndex(arrayIndex)
@@ -38,16 +39,16 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                     for personIndex in 0...(arrayInArray.count - 1) {
                         let personObject : AnyObject = arrayInArray.objectAtIndex(personIndex)
                         var pListPerson = Person(firstName: personObject["firstName"] as String, lastName: personObject["lastName"] as String)
-                        teachers.append(pListPerson)
+                        self.teachers.append(pListPerson)
                     }
-                    classRoster.append(teachers)
+                    self.classRoster.append(teachers)
                 } else {
                     for personIndex in 0...(arrayInArray.count - 1) {
                         let personObject : AnyObject = arrayInArray.objectAtIndex(personIndex)
                         var pListPerson = Person(firstName: personObject["firstName"] as String, lastName: personObject["lastName"] as String)
-                        students.append(pListPerson)
+                        self.students.append(pListPerson)
                     }
-                    classRoster.append(students)
+                    self.classRoster.append(students)
                 }
                 
             }
@@ -128,21 +129,35 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         
     }
 
-    func pathForDocumentDirectory() -> String {
-        let paths = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true) as [String]
-        let documentsDirectory = paths[0]
-        return documentsDirectory
+    func saveData() {
+        var saveArray = self.classRoster
+        NSKeyedArchiver.archiveRootObject(saveArray, toFile: self.pathForPListArchive())
     }
-
+    
     func pathForPListArchive() -> String {
         let documentsDirectory = self.pathForDocumentDirectory()
         let filePath = documentsDirectory + "/Archive"
         return filePath
     }
     
-    func saveData() {
-        var saveArray = self.classRoster
-        NSKeyedArchiver.archiveRootObject(saveArray, toFile: self.pathForPListArchive())
+    func pathForDocumentDirectory() -> String {
+        let paths = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true) as [String]
+        let documentsDirectory = paths[0]
+        return documentsDirectory
+    }
+    
+    func imageLoad() {
+        for imageIndex in 0...1 {
+            for personObject in classRoster[imageIndex] {
+                if personObject.hasImage {
+                    let filePath = self.pathForDocumentDirectory() + "/\(personObject.fullName()).png"
+                    var pngData = NSData(contentsOfFile: filePath)
+                    var image = UIImage(data: pngData)
+                    personObject.profileImage = image
+                }
+            }
+        }
+        
     }
     
 }
